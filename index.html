@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamerShop - Интернет-магазин</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --primary: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --danger: #dc3545;
+            --success: #198754;
+            --warning: #ffc107;
+        }
+
+        body.dark {
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --text: #eeeeee;
+            --text-light: #a0a0a0;
+            --border: #2c3e50;
+            --primary: #4e73df;
+            --primary-hover: #667eea;
+        }
+
+        body.high-contrast {
+            --bg: #000000;
+            --card: #111111;
+            --text: #ffffff;
+            --text-light: #ffff00;
+            --border: #ffff00;
+            --primary: #ffff00;
+            --primary-hover: #ffcc00;
+        }
+
+        body.font-large {
+            font-size: 20px;
+        }
+        body.font-large button,
+        body.font-large .btn {
+            font-size: 18px;
+            padding: 6px 14px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        button, .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .user-panel {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .cart-icon, .favorite-icon {
+            cursor: pointer;
+            font-size: 20px;
+            background: var(--card);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .slider {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 15px 0;
+            margin-bottom: 25px;
+            scroll-snap-type: x mandatory;
+        }
+        .slide {
+            min-width: 280px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px 20px;
+            border-radius: 12px;
+            scroll-snap-align: start;
+            color: white;
+            font-weight: bold;
+        }
+
+        .filters-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: var(--card);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .filters-bar select,
+        .filters-bar input {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+        .filters-bar input {
+            min-width: 180px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .product-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .product-card h3 {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+        .rating {
+            font-size: 13px;
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+        .product-card .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        .page-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card);
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .game-area {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 25px;
+            border: 1px solid var(--border);
+        }
+        .clicker-btn {
+            background: var(--warning);
+            color: #000;
+            font-size: 28px;
+            padding: 12px 30px;
+            border-radius: 50px;
+            margin: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            button, .btn {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+        }
+   .product-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.product-card img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">🎮 GamerShop</div>
+        <div class="user-panel">
+            <button id="themeToggle" class="btn-outline btn-small">🌓 Тема</button>
+            <button id="accessibilityToggle" class="btn-outline btn-small">👁️ Слабовидящие</button>
+            <span id="userGreeting" style="font-size: 14px; cursor: pointer;"></span>
+            <button id="authBtn" class="btn-small">Войти</button>
+            <button id="cartBtn" class="cart-icon">🛒 <span id="cartCount">0</span></button>
+            <button id="favoritesBtn" class="favorite-icon">❤️ <span id="favCount">0</span></button>
+        </div>
+    </div>
+
+    <div class="slider" id="slider">
+        <div class="slide">🔥 Скидка 20% на все игры недели!</div>
+        <div class="slide">🎁 Бонус +100 бонусов за регистрацию</div>
+        <div class="slide">🚚 Бесплатная доставка от 3000₽</div>
+        <div class="slide">⭐ Напиши отзыв и получи 50 бонусов</div>
+    </div>
+
+    <div class="filters-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Поиск товара">
+        <select id="categoryFilter">
+            <option value="">Категория</option>
+            <option>Игры</option>
+            <option>Клавиатуры</option>
+            <option>Мыши</option>
+        </select>
+        <select id="brandFilter">
+            <option value="">Бренд</option>
+            <option>Logitech</option>
+            <option>Razer</option>
+            <option>Microsoft</option>
+        </select>
+        <select id="sizeFilter">
+            <option value="">Размер</option>
+            <option>M</option>
+            <option>L</option>
+            <option>XL</option>
+        </select>
+        <select id="colorFilter">
+            <option value="">Цвет</option>
+            <option>Черный</option>
+            <option>Белый</option>
+        </select>
+        <select id="ratingFilter">
+            <option value="">Рейтинг</option>
+            <option>4+</option>
+            <option>3+</option>
+        </select>
+        <select id="stockFilter">
+            <option value="">Новинка</option>
+            <option>Да</option>
+            <option>Нет</option>
+        </select>
+        <select id="sortBy">
+            <option value="name_asc">По имени А-Я</option>
+            <option value="price_asc">Цена ↑</option>
+            <option value="price_desc">Цена ↓</option>
+            <option value="rating_desc">По рейтингу ↓</option>
+        </select>
+    </div>
+
+    <div id="productsContainer" class="products-grid"></div>
+    <div id="pagination" class="pagination"></div>
+
+    <div class="game-area">
+        <h3>🎲 Игра: кликай и получай бонусы!</h3>
+        <p>💰 Бонусный баланс: <span id="bonusPoints" style="font-size: 20px; font-weight: bold;">0</span> баллов</p>
+        <button id="clickGameBtn" class="clicker-btn">🎮 КЛИКНИ МЕНЯ</button>
+        <p style="font-size: 12px;">За каждый клик +5 бонусов</p>
+    </div>
+</div>
+
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <h3>Авторизация</h3>
+        <input id="loginEmail" placeholder="Email" type="email">
+        <input id="loginPassword" placeholder="Пароль" type="password">
+        <button id="doLogin">Войти</button>
+        <hr>
+        <h3>Регистрация</h3>
+        <input id="regName" placeholder="Имя">
+        <input id="regEmail" placeholder="Email">
+        <input id="regPassword" placeholder="Пароль">
+        <button id="doRegister">Зарегистрироваться</button>
+        <button class="closeModal btn-outline">Закрыть</button>
+    </div>
+</div>
+
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <h2>🛒 Корзина</h2>
+        <div id="cartItems"></div>
+        <div id="cartTotal" style="font-weight: bold; margin: 10px 0;"></div>
+        <button id="checkoutBtn">Оформить заказ</button>
+        <button class="closeModal btn-outline">Закрыть</button>
+    </div>
+</div>
+
+<div id="favoritesModal" class="modal">
+    <div class="modal-content">
+        <h2>❤️ Избранное</h2>
+        <div id="favItems"></div>
+        <button class="closeModal btn-outline">Закрыть</button>
+    </div>
+</div>
+
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <h2>👤 Личный кабинет</h2>
+        <div id="profileInfo"></div>
+        <h3>📦 Мои заказы</h3>
+        <div id="ordersList"></div>
+        <h3>💬 Мои отзывы</h3>
+        <div id="reviewsList"></div>
+        <button id="editProfileBtn">Редактировать профиль</button>
+        <button class="closeModal btn-outline">Закрыть</button>
+    </div>
+</div>
+
+<div id="productModal" class="modal">
+    <div class="modal-content" id="productDetail"></div>
+    <button class="closeModal btn-outline">Закрыть</button>
+</div>
+
+<script>
+    // ТОВАРЫ
+    let products = [
+        { id: 1, name: "Cyberpunk 2077", price: 2499, category: "Игры", brand: "CDPR", size: "M", color: "Черный", rating: 4.5, stock: "Новинка", img: "https://avatars.mds.yandex.net/i?id=c2bef43bb102315f282ca5762368b6e7_l-5191337-images-thumbs&n=13" },
+        { id: 2, name: "Razer DeathAdder", price: 4990, category: "Мыши", brand: "Razer", size: "L", color: "Черный", rating: 4.7, stock: "Обычный", img: "https://avatars.mds.yandex.net/get-mpic/10933212/2a000001918003c432a1b8be37bfb9762c0b/9hq" },
+        { id: 3, name: "Logitech G513", price: 8990, category: "Клавиатуры", brand: "Logitech", size: "L", color: "Черный", rating: 4.9, stock: "Новинка", img: "https://avatars.mds.yandex.net/i?id=a169445be73f7c2ce8505c4bd9b8d5d4_l-4033566-images-thumbs&n=13" },
+        { id: 4, name: "Elden Ring", price: 3499, category: "Игры", brand: "FromSoft", size: "M", color: "Белый", rating: 5.0, stock: "Обычный", img: "https://avatars.mds.yandex.net/i?id=ca3a404aaba35b9df9a22d07f9a227fd_l-4335903-images-thumbs&n=13" },
+        { id: 5, name: "Microsoft Pro", price: 2990, category: "Мыши", brand: "Microsoft", size: "M", color: "Белый", rating: 4.2, stock: "Обычный", img: "https://i.ebayimg.com/images/g/auoAAOSwPnpnNrzL/s-l1600.jpg" },
+        { id: 6, name: "God of War", price: 1999, category: "Игры", brand: "Sony", size: "M", color: "Черный", rating: 4.8, stock: "Новинка", img: "https://avatars.mds.yandex.net/i?id=8b0669a29bfa1099852a0b222845a448_l-17963293-images-thumbs&n=13" },
+        { id: 7, name: "HyperX Alloy", price: 7500, category: "Клавиатуры", brand: "HyperX", size: "XL", color: "Черный", rating: 4.6, stock: "Обычный", img: "https://cdn.mtscdn.ru/upload/iblock/ccb/hx_product_keyboard_alloy_origins_ru_3_zm_lg.jpg" },
+        { id: 8, name: "SteelSeries Rival", price: 4500, category: "Мыши", brand: "SteelSeries", size: "M", color: "Черный", rating: 4.4, stock: "Новинка", img: "https://avatars.mds.yandex.net/i?id=fd0b6817233c1c92a3ad6cfaa47f6a52_l-5336886-images-thumbs&n=13" }
+    ];
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+    let cart = JSON.parse(localStorage.getItem("cart")) || {};
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || {};
+    let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    let bonusPoints = JSON.parse(localStorage.getItem("bonusPoints")) || 0;
+
+    // СОЗДАЁМ УЧЁТКУ ПРЕПОДАВАТЕЛЯ
+    if(users.length === 0) {
+        users.push({ id: 1, name: "Преподаватель", email: "liubovsheyda@gmail.com", password: "Teacher_2026" });
+        users.push({ id: 2, name: "Тестовый", email: "test@test.com", password: "123" });
+        saveAll();
+    }
+
+    function saveAll() {
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        localStorage.setItem("cart", JSON.stringify(cart));
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        localStorage.setItem("reviews", JSON.stringify(reviews));
+        localStorage.setItem("orders", JSON.stringify(orders));
+        localStorage.setItem("bonusPoints", JSON.stringify(bonusPoints));
+    }
+
+    function updateCounters() {
+        let uid = currentUser?.id || "guest";
+        document.getElementById("cartCount").innerText = cart[uid]?.length || 0;
+        document.getElementById("favCount").innerText = favorites[uid]?.length || 0;
+        document.getElementById("bonusPoints").innerText = bonusPoints;
+        if(currentUser) {
+            document.getElementById("userGreeting").innerHTML = `👋 ${currentUser.name}`;
+        } else {
+            document.getElementById("userGreeting").innerHTML = "";
+        }
+    }
+
+    let currentPage = 1;
+    const rowsPerPage = 6;
+
+    function filterAndSortProducts() {
+        let search = document.getElementById("searchInput").value.toLowerCase();
+        let category = document.getElementById("categoryFilter").value;
+        let brand = document.getElementById("brandFilter").value;
+        let size = document.getElementById("sizeFilter").value;
+        let color = document.getElementById("colorFilter").value;
+        let ratingVal = document.getElementById("ratingFilter").value;
+        let stock = document.getElementById("stockFilter").value;
+        let sort = document.getElementById("sortBy").value;
+
+        let filtered = products.filter(p => 
+            p.name.toLowerCase().includes(search) &&
+            (category ? p.category === category : true) &&
+            (brand ? p.brand === brand : true) &&
+            (size ? p.size === size : true) &&
+            (color ? p.color === color : true) &&
+            (ratingVal ? (ratingVal === "4+" ? p.rating >= 4 : p.rating >= 3) : true) &&
+            (stock ? p.stock === stock : true)
+        );
+
+        if(sort === "price_asc") filtered.sort((a,b)=> a.price - b.price);
+        else if(sort === "price_desc") filtered.sort((a,b)=> b.price - a.price);
+        else if(sort === "rating_desc") filtered.sort((a,b)=> b.rating - a.rating);
+        else filtered.sort((a,b)=> a.name.localeCompare(b.name));
+
+        return filtered;
+    }
+
+    function renderCatalog() {
+        let filtered = filterAndSortProducts();
+        let totalPages = Math.ceil(filtered.length / rowsPerPage);
+        let start = (currentPage - 1) * rowsPerPage;
+        let paginated = filtered.slice(start, start + rowsPerPage);
+
+        let container = document.getElementById("productsContainer");
+        container.innerHTML = paginated.map(p => `
+            <div class="product-card">
+                <img src="${p.img}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <div class="price">${p.price.toLocaleString()} ₽</div>
+                <div class="rating">⭐ ${p.rating}</div>
+                <div class="buttons">
+                    <button onclick="addToCart(${p.id})" class="btn-small">🛒 В корзину</button>
+                    <button onclick="toggleFavorite(${p.id})" class="btn-small">❤️ В избранное</button>
+                    <button onclick="showProduct(${p.id})" class="btn-small">📖 Подробнее</button>
+                </div>
+            </div>
+        `).join("");
+
+        let pagDiv = document.getElementById("pagination");
+        pagDiv.innerHTML = "";
+        for(let i = 1; i <= totalPages; i++) {
+            pagDiv.innerHTML += `<button class="page-btn btn-small" onclick="changePage(${i})">${i}</button>`;
+        }
+    }
+
+    window.changePage = (page) => { currentPage = page; renderCatalog(); };
+    
+    window.addToCart = (id) => {
+        if(!currentUser) { alert("Сначала войдите в аккаунт"); return; }
+        let uid = currentUser.id;
+        if(!cart[uid]) cart[uid] = [];
+        cart[uid].push(id);
+        saveAll();
+        updateCounters();
+        alert("✅ Товар добавлен в корзину");
+    };
+
+    window.toggleFavorite = (id) => {
+        if(!currentUser) { alert("Сначала войдите в аккаунт"); return; }
+        let uid = currentUser.id;
+        if(!favorites[uid]) favorites[uid] = [];
+        if(favorites[uid].includes(id)) {
+            favorites[uid] = favorites[uid].filter(i => i !== id);
+            alert("❤️ Удалено из избранного");
+        } else {
+            favorites[uid].push(id);
+            alert("⭐ Добавлено в избранное");
+        }
+        saveAll();
+        updateCounters();
+        renderCatalog();
+    };
+
+    window.showProduct = (id) => {
+        let prod = products.find(p => p.id === id);
+        let prodReviews = reviews.filter(r => r.productId === id);
+        let revHtml = prodReviews.map(r => `<div style="border-bottom:1px solid var(--border); padding:8px 0;"><b>${users.find(u=>u.id===r.userId)?.name}:</b> ${'⭐'.repeat(r.rating)} - ${r.text}</div>`).join("");
+        document.getElementById("productDetail").innerHTML = `
+            <h2>${prod.name}</h2>
+            <img src="${prod.img}" width="100%" style="border-radius:12px;">
+            <p><strong>💰 Цена:</strong> ${prod.price.toLocaleString()} ₽</p>
+            <p><strong>⭐ Рейтинг:</strong> ${prod.rating}</p>
+            <h3>📝 Отзывы:</h3>
+            <div>${revHtml || "Пока нет отзывов"}</div>
+            ${currentUser ? `
+                <hr>
+                <textarea id="reviewText" rows="2" placeholder="Ваш отзыв..." style="width:100%"></textarea>
+                <select id="reviewRating">
+                    <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+                </select>
+                <button onclick="addReview(${id})">✍️ Добавить отзыв</button>
+                <button onclick="deleteMyReview(${id})" class="btn-outline">🗑️ Удалить мой отзыв</button>
+            ` : "<p>🔒 Войдите, чтобы оставить отзыв</p>"}
+        `;
+        document.getElementById("productModal").style.display = "flex";
+    };
+
+    window.addReview = (pid) => {
+        let text = document.getElementById("reviewText")?.value;
+        let rating = parseInt(document.getElementById("reviewRating")?.value);
+        if(!text) { alert("Напишите отзыв"); return; }
+        reviews.push({ userId: currentUser.id, productId: pid, text, rating, date: new Date() });
+        saveAll();
+        showProduct(pid);
+        alert("Спасибо за отзыв! +50 бонусов");
+        bonusPoints += 50;
+        saveAll();
+        updateCounters();
+    };
+
+    window.deleteMyReview = (pid) => {
+        reviews = reviews.filter(r => !(r.userId === currentUser.id && r.productId === pid));
+        saveAll();
+        showProduct(pid);
+        alert("Отзыв удалён");
+    };
+
+    function renderCartModal() {
+        let uid = currentUser?.id;
+        if(!uid) return;
+        let items = cart[uid] || [];
+        let prodMap = products.reduce((acc,p) => { acc[p.id]=p; return acc; }, {});
+        let total = 0;
+        let itemsHtml = "";
+        for(let id of items) {
+            let p = prodMap[id];
+            if(p) {
+                total += p.price;
+                itemsHtml += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+                    ${p.name} - ${p.price.toLocaleString()}₽
+                    <button onclick="removeFromCart(${id})" class="btn-small">❌</button>
+                </div>`;
+            }
+        }
+        document.getElementById("cartItems").innerHTML = itemsHtml || "Корзина пуста";
+        document.getElementById("cartTotal").innerHTML = `<strong>💰 Итого: ${total.toLocaleString()} ₽</strong><br>🎁 Бонусов: ${bonusPoints} баллов = скидка до ${Math.min(bonusPoints, total)}₽`;
+    }
+
+    window.removeFromCart = (id) => {
+        let uid = currentUser.id;
+        let idx = cart[uid].indexOf(id);
+        if(idx !== -1) cart[uid].splice(idx, 1);
+        saveAll();
+        updateCounters();
+        renderCartModal();
+    };
+
+    window.checkout = () => {
+        let uid = currentUser.id;
+        let items = cart[uid] || [];
+        if(items.length === 0) { alert("Корзина пуста"); return; }
+        let total = items.reduce((sum, id) => sum + products.find(p=>p.id===id).price, 0);
+        let discount = Math.min(bonusPoints, total);
+        let final = total - discount;
+        orders.push({ userId: uid, items: [...items], total: final, bonusUsed: discount, date: new Date() });
+        bonusPoints -= discount;
+        cart[uid] = [];
+        saveAll();
+        updateCounters();
+        alert(`✅ Заказ оформлен на ${final.toLocaleString()} ₽! Спасибо за покупку!`);
+        renderCartModal();
+        document.getElementById("cartModal").style.display = "none";
+    };
+
+    function renderFavModal() {
+        let uid = currentUser?.id;
+        let favIds = favorites[uid] || [];
+        let prodMap = products.reduce((acc,p) => { acc[p.id]=p; return acc; }, {});
+        document.getElementById("favItems").innerHTML = favIds.map(id => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+                <div><b>${prodMap[id]?.name}</b> - ${prodMap[id]?.price.toLocaleString()}₽</div>
+                <div>
+                    <button onclick="addToCart(${id})" class="btn-small">🛒</button>
+                    <button onclick="toggleFavorite(${id})" class="btn-small">💔</button>
+                </div>
+            </div>
+        `).join("");
+        if(favIds.length === 0) document.getElementById("favItems").innerHTML = "Нет избранных товаров";
+    }
+
+    function loadProfile() {
+        if(!currentUser) return;
+        document.getElementById("profileInfo").innerHTML = `
+            <p><strong>Имя:</strong> ${currentUser.name}</p>
+            <p><strong>Email:</strong> ${currentUser.email}</p>
+            <p><strong>💰 Бонусы:</strong> ${bonusPoints} баллов</p>
+        `;
+        let userOrders = orders.filter(o => o.userId === currentUser.id);
+        document.getElementById("ordersList").innerHTML = userOrders.map(o => `
+            <div style="padding:8px; border-bottom:1px solid var(--border);">
+                📅 ${new Date(o.date).toLocaleDateString()} — ${o.total.toLocaleString()}₽ (скидка ${o.bonusUsed} бонусов)
+            </div>
+        `).join("");
+        if(userOrders.length === 0) document.getElementById("ordersList").innerHTML = "Пока нет заказов";
+        
+        let userReviews = reviews.filter(r => r.userId === currentUser.id);
+        document.getElementById("reviewsList").innerHTML = userReviews.map(r => `
+            <div style="padding:8px; border-bottom:1px solid var(--border);">
+                📝 Товар #${r.productId}: ${r.text} (${'⭐'.repeat(r.rating)})
+            </div>
+        `).join("");
+    }
+
+    // НАСТРОЙКА КНОПОК (ВАЖНО!)
+    document.getElementById("themeToggle").onclick = () => { document.body.classList.toggle("dark"); };
+    
+    let accessibilityMode = false;
+    document.getElementById("accessibilityToggle").onclick = () => {
+        accessibilityMode = !accessibilityMode;
+        document.body.classList.toggle("high-contrast");
+        document.body.classList.toggle("font-large");
+    };
+
+    document.getElementById("authBtn").onclick = () => document.getElementById("authModal").style.display = "flex";
+    
+    document.getElementById("doLogin").onclick = () => {
+        let email = document.getElementById("loginEmail").value;
+        let pwd = document.getElementById("loginPassword").value;
+        let user = users.find(u => u.email === email && u.password === pwd);
+        if(user) {
+            currentUser = user;
+            saveAll();
+            updateCounters();
+            renderCatalog();
+            document.getElementById("authModal").style.display = "none";
+            alert(`Добро пожаловать, ${user.name}!`);
+        } else {
+            alert("Неверный email или пароль");
+        }
+    };
+
+    document.getElementById("doRegister").onclick = () => {
+        let name = document.getElementById("regName").value;
+        let email = document.getElementById("regEmail").value;
+        let pwd = document.getElementById("regPassword").value;
+        if(!name || !email || !pwd) { alert("Заполните все поля"); return; }
+        if(users.find(u => u.email === email)) { alert("Email уже используется"); return; }
+        let newUser = { id: Date.now(), name, email, password: pwd };
+        users.push(newUser);
+        saveAll();
+        alert("Регистрация успешна! Теперь войдите");
+        document.getElementById("authModal").style.display = "none";
+    };
+
+    document.getElementById("cartBtn").onclick = () => {
+        if(!currentUser) { alert("Войдите в аккаунт"); return; }
+        renderCartModal();
+        document.getElementById("cartModal").style.display = "flex";
+    };
+
+    document.getElementById("favoritesBtn").onclick = () => {
+        if(!currentUser) { alert("Войдите в аккаунт"); return; }
+        renderFavModal();
+        document.getElementById("favoritesModal").style.display = "flex";
+    };
+
+    document.getElementById("checkoutBtn").onclick = checkout;
+
+    document.getElementById("userGreeting").onclick = () => {
+        if(currentUser) {
+            loadProfile();
+            document.getElementById("profileModal").style.display = "flex";
+        } else {
+            alert("Войдите в аккаунт");
+        }
+    };
+
+    document.getElementById("editProfileBtn").onclick = () => {
+        let newName = prompt("Введите новое имя", currentUser.name);
+        if(newName && newName.trim()) {
+            currentUser.name = newName.trim();
+            saveAll();
+            loadProfile();
+            updateCounters();
+            alert("Имя обновлено");
+        }
+    };
+
+    document.getElementById("clickGameBtn").onclick = () => {
+        if(!currentUser) { alert("Войдите в аккаунт, чтобы играть"); return; }
+        bonusPoints += 5;
+        saveAll();
+        updateCounters();
+        alert(`+5 бонусов! Всего: ${bonusPoints}`);
+    };
+
+    document.querySelectorAll(".closeModal").forEach(btn => {
+        btn.onclick = () => document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
+    });
+
+    // ФИЛЬТРЫ И ПОИСК
+    document.querySelectorAll(".filters-bar select, .filters-bar input").forEach(el => {
+        el.addEventListener("change", () => { currentPage = 1; renderCatalog(); });
+        el.addEventListener("input", () => { currentPage = 1; renderCatalog(); });
+    });
+
+    // ЗАПУСК
+    updateCounters();
+    renderCatalog();
+</script>
+</body>
+</html>
